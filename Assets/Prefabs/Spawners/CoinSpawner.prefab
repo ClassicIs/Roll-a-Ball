@@ -1,0 +1,138 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &9030195358717129158
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9030195358717129159}
+  m_Layer: 0
+  m_Name: End
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9030195358717129159
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9030195358717129158}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 20}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 9030195360022838244}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &9030195360022838242
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9030195360022838244}
+  - component: {fileID: 9030195360022838243}
+  m_Layer: 0
+  m_Name: CoinSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9030195360022838244
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9030195360022838242}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2, y: 1, z: -60}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 9030195358717129159}
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &9030195360022838243
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9030195360022838242}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1456d229d7152c40beefbb3affe7a09, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spawnCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 1.4548826
+      outSlope: 1.4548826
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.063482925
+    - serializedVersion: 3
+      time: 0.35100204
+      value: 0.29129076
+      inSlope: 0.34932074
+      outSlope: 0.34932074
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.31898102
+      outWeight: 0.17825972
+    - serializedVersion: 3
+      time: 0.78048307
+      value: 0.2398259
+      inSlope: -1.5237235
+      outSlope: -1.5237235
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.27675587
+      outWeight: 0.19930151
+    - serializedVersion: 3
+      time: 0.9411141
+      value: 0.12087751
+      inSlope: -1.3203125
+      outSlope: -1.3203125
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.18247925
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1.0833293
+      value: -0.0000007972121
+      inSlope: -0.07375252
+      outSlope: -0.07375252
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.8048606
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  vertOrHor: 1
+  objToSpawn: {fileID: 1859920279729970, guid: 3f81bf8a73cbc2348bca853404af98ab, type: 3}
+  endOfCoinSpawn: {fileID: 9030195358717129159}
+  howManyObjects: 7
+  archForObject: 22.08
+  steep: 3
+  thisMesh: 2
+  radiusOfMesh: 0
+  gizmosColor: {r: 1, g: 0.7534226, b: 0, a: 1}
+  spawnerMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  sizeOfTheObject: {x: 0.5, y: 0.39, z: 0.5}

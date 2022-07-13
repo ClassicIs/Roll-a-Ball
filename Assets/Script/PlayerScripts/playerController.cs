@@ -34,7 +34,7 @@ public class playerController : MonoBehaviour {
 
     bool isStunned;
     bool isJumping;
-
+    bool isActive;
 
     private Rigidbody rb;
     List<Collider> coins = new List<Collider>();
@@ -45,11 +45,27 @@ public class playerController : MonoBehaviour {
         jumpKey = KeyState.Off;
         isJumping = false;
         isStunned = false;
+        isActive = true;
         canUseMagnit = true;
         isRushing = false;
         increaseForce = 1f;
         isGrounded = true;
         rb = GetComponent<Rigidbody>();
+        GameStateManager.Instance.OnGameStateChanged += ChangeState;
+    }
+
+    private void ChangeState(GameStates state)
+    {
+        switch(state)
+        {
+            case GameStates.Gameplay:
+                isActive = true;
+                break;
+            case GameStates.Paused:
+                isActive = false;
+                rb.velocity = new Vector3(0f, 0f, 0f);                
+                break;
+        }
     }
 
     public void IsInStun()
@@ -94,63 +110,67 @@ public class playerController : MonoBehaviour {
         Off
     }
     KeyState jumpKey;
+
+
     void FixedUpdate()
     {
-        if(rb.velocity.y < 0)
+        if (isActive)
         {
-            rb.AddForce(new Vector3(0, -300));
-        }
-        if (!isStunned)
-        {
-            rb.AddForce(Vector3.forward * forwardForce * increaseForce * Time.deltaTime);
-            
-            
-            /*if(Input.GetKeyDown(KeyCode.A))
+            if (rb.velocity.y < 0)
             {
-                rb.MovePosition(transform.position + moveForce * -1);
+                rb.AddForce(new Vector3(0, -300));
             }
-            else if (Input.GetKeyDown(KeyCode.D))
+            if (!isStunned)
             {
-                rb.MovePosition(transform.position + moveForce * 1);
-            }*/
-            if (isGrounded)
-            {
-                rb.AddForce(Vector3.right * sidewayForce * Input.GetAxisRaw("Horizontal") * Time.deltaTime, ForceMode.VelocityChange);
-                if (jumpKey == KeyState.Pressed)
+                rb.AddForce(Vector3.forward * forwardForce * increaseForce * Time.deltaTime);
+                /*if(Input.GetKeyDown(KeyCode.A))
                 {
-                    Debug.Log("Is jumping");
-                    rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-                    jumpKey = KeyState.Off;
+                    rb.MovePosition(transform.position + moveForce * -1);
                 }
-
-                if (Input.GetKey(KeyCode.LeftShift))
+                else if (Input.GetKeyDown(KeyCode.D))
                 {
-                    isRushing = true;
-                    increaseForce = maxIncreaseForce;
+                    rb.MovePosition(transform.position + moveForce * 1);
+                }*/
+                if (isGrounded)
+                {
+                    rb.AddForce(Vector3.right * sidewayForce * Input.GetAxisRaw("Horizontal") * Time.deltaTime, ForceMode.VelocityChange);
+                    if (jumpKey == KeyState.Pressed)
+                    {
+                        Debug.Log("Is jumping");
+                        rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+                        jumpKey = KeyState.Off;
+                    }
+
+                    if (Input.GetKey(KeyCode.LeftShift))
+                    {
+                        isRushing = true;
+                        increaseForce = maxIncreaseForce;
+                    }
+                    else
+                    {
+                        isRushing = false;
+                        increaseForce = 1f;
+                    }
+                    /*
+                    if(Input.GetKeyDown(KeyCode.I) && canUseMagnit)
+                    {
+                        Debug.Log("Using Magnit");
+                        canUseMagnit = false;
+                        StartCoroutine(AttractingCoins());
+                        this.Invoke(delegate { 
+                            canUseMagnit = true;
+                            StopCoroutine(AttractingCoins());
+                            Debug.Log("Stopping coroutine");
+                        }, timeForMagnit);
+                    }*/
                 }
                 else
                 {
-                    isRushing = false;
-                    increaseForce = 1f;
+                    rb.AddForce(Vector3.right * sidewayForce / 2f * Input.GetAxisRaw("Horizontal") * Time.deltaTime, ForceMode.VelocityChange);
                 }
-                /*
-                if(Input.GetKeyDown(KeyCode.I) && canUseMagnit)
-                {
-                    Debug.Log("Using Magnit");
-                    canUseMagnit = false;
-                    StartCoroutine(AttractingCoins());
-                    this.Invoke(delegate { 
-                        canUseMagnit = true;
-                        StopCoroutine(AttractingCoins());
-                        Debug.Log("Stopping coroutine");
-                    }, timeForMagnit);
-                }*/
             }
-            else
-            {
-                rb.AddForce(Vector3.right * sidewayForce / 2f * Input.GetAxisRaw("Horizontal") * Time.deltaTime, ForceMode.VelocityChange);
-            }
-        }              
+        }
+        
     }
 
     IEnumerator AttractingCoins()

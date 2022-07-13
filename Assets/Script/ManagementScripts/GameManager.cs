@@ -68,20 +68,23 @@ public class GameManager : MonoBehaviour {
 
     public void Respawn()
     {
-        IUIInterface obj = UIManagerScript.ChooseMenu(TypesOfMenu.restart);
+        MenuChooserOn(TypesOfMenu.restart);
+        /*IUIInterface obj = UIManagerScript.ChooseMenu(TypesOfMenu.restart);
         
-        obj.MenuOn(true, delegate {
+        obj.MenuOn(delegate {
             Debug.Log("Respawn");            
-            Time.timeScale = slowTimeScale; });
+            Time.timeScale = slowTimeScale; });*/
     }
 
     private void IfEndLevel()
     {
-        IUIInterface obj = UIManagerScript.ChooseMenu(TypesOfMenu.win);
+        MenuChooserOn(TypesOfMenu.win);
+
+        /*IUIInterface obj = UIManagerScript.ChooseMenu(TypesOfMenu.win);
         playerController.IsInStun();
         obj.MenuOn(true, delegate {
             Debug.Log("End Level");            
-            Time.timeScale = slowTimeScale; });
+            Time.timeScale = slowTimeScale; });*/
     }
     
     private void IfCoinsChange(GameObject coin)
@@ -94,17 +97,27 @@ public class GameManager : MonoBehaviour {
 
     private void IfPressedEscape()
     {
-        MenuChooserOn(TypesOfMenu.pause, delegate {
+        MenuChooserOn(TypesOfMenu.pause);
+        /*MenuChooserOn(TypesOfMenu.pause, delegate {
             Debug.Log("Paused");
             Time.timeScale = slowTimeScale;
-        });
+        });*/
     }
 
-    private void MenuChooserOn(TypesOfMenu type, Action OnComplete)
+    private void MenuChooserOn(TypesOfMenu type)
     {
-        IUIInterface obj = UIManagerScript.ChooseMenu(type);
+        UIManagerScript.OpenMenu(type, delegate {
+            Debug.Log(type.ToString());
+            GameStateManager.Instance.ChangeState(GameStates.Paused);
+            //Time.timeScale = slowTimeScale;
+        }, delegate {
+            GameStateManager.Instance.ChangeState(GameStates.Gameplay);
+            //Time.timeScale = 1f;
+        });
+
+        /*IUIInterface obj = UIManagerScript.ChooseMenu(type);
         playerController.IsInStun();
-        obj.MenuOn(true, OnComplete);
+        obj.MenuOn(true, OnComplete);*/
     }    
 }
 

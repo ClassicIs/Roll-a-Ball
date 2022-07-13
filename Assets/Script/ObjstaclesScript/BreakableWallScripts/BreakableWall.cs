@@ -15,13 +15,21 @@ public class BreakableWall : MonoBehaviour
     [SerializeField]
     GameObject breakPiece;
     WholeWallScript wholeWallScript;
+    [SerializeField]
+    [Range(1, 50)]
+    int XSize;
+    [SerializeField]
+    [Range(1, 50)]
+    int ySize;
+    [SerializeField]
+    GameObject onePieceOfWall;
 
-    // Start is called before the first frame update
     void Start()
     {
         int length = transform.childCount;
         piecesOfWall = new GameObject[length - 1];
-        for (int i = 0; i < length; i++)
+        wholeWallScript = transform.GetChild(0).GetComponent<WholeWallScript>();
+        /*for (int i = 0; i < length; i++)
         {
             if (i == 0)
             {
@@ -30,6 +38,20 @@ public class BreakableWall : MonoBehaviour
                 continue;
             }
             piecesOfWall[i - 1] = transform.GetChild(i).gameObject;
+        }*/
+
+        Wall thisWall = new Wall(XSize, ySize, onePieceOfWall, transform.position);
+        Vector3 sizeOfColliderWall;
+        
+        Vector3[] wallPositions = thisWall.BuildAWall(out sizeOfColliderWall);
+
+        Debug.LogFormat("Wall size is {0}", sizeOfColliderWall);
+
+        wholeWallScript.SetWallSize(sizeOfColliderWall);
+        for (int i = 0; i < wallPositions.Length; i++)
+        {
+            //Debug.LogFormat("This piece position is {0}", wallPositions[i]);            
+            Instantiate(onePieceOfWall, wallPositions[i], Quaternion.identity, transform);
         }
     }
 

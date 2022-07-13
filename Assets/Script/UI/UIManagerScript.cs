@@ -21,6 +21,8 @@ public class UIManagerScript : MonoBehaviour
     [SerializeField]
     Text scoreText;
     bool isChangingScore = false;
+    [SerializeField]
+    float speed;
 
     public IUIInterface ChooseMenu(TypesOfMenu type)
     {
@@ -45,28 +47,27 @@ public class UIManagerScript : MonoBehaviour
 
     IUIInterface currentMenu = null;
 
-    public void OpenMenu(TypesOfMenu type, Action actionOnCompletion = null)
+    public void OpenMenu(TypesOfMenu type, Action beforeCompletion = null, Action afterCompletion = null)
     {
         currentMenu = ChooseMenu(type);
-        currentMenu.MenuOn(true, actionOnCompletion);        
+        currentMenu.MenuOn(beforeCompletion, afterCompletion);        
     }
 
     public void CloseMenu()
     {
-        CloseMenu(null);
-    }
-
-    public void CloseMenu(Action actionOnCompletion = null)
-    {
         if (currentMenu != null)
         {
-            currentMenu.MenuOn(false, actionOnCompletion);
-        } 
+            currentMenu.MenuOff();
+        }
+        else
+        {
+            Debug.Log("There's no menu.");
+        }
     }
 
     public void ChangeScore(int newScore)
     {
-        float speed = 1f;
+        
         if (!isChangingScore)
         {
             Vector3 oldVector = scoreText.GetComponent<RectTransform>().localScale;
@@ -79,8 +80,9 @@ public class UIManagerScript : MonoBehaviour
             Action afterCompletion = delegate
             {
                 LeanTween.scale(scoreText.gameObject, oldVector, speed).setOnComplete(nextAfterCompletion);
+                LeanTween.textColor(scoreText.rectTransform, Color.white, speed);
             };
-
+            LeanTween.textColor(scoreText.rectTransform, Color.yellow, speed);
             LeanTween.scale(scoreText.gameObject, new Vector3(1.2f, 1.2f), speed).setOnComplete(afterCompletion);            
         }
         scoreText.text = newScore.ToString();

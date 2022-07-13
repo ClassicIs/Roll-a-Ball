@@ -18,9 +18,12 @@ public class MenuControllerScript : MonoBehaviour, IUIInterface
     float speedToAppear;
     [SerializeField]
     LeanTweenType typeOfEasing;
+    Action afterCompletion;
+    bool menuState;
 
     void Awake()
     {
+        menuState = false;
         bgImage = GetComponent<Image>();
         bgColor = bgImage.color;
         bgColor.a = 0f;
@@ -37,7 +40,6 @@ public class MenuControllerScript : MonoBehaviour, IUIInterface
         }
     }
 
-
     private void ButtonsOn(bool on)
     {
         foreach (GameObject btn in buttons)
@@ -52,48 +54,61 @@ public class MenuControllerScript : MonoBehaviour, IUIInterface
     {
         foreach (GameObject btn in buttons)
         {
-            btn.transform.gameObject.SetActive(false);
-            //btn.GetComponent<RectTransform>().localScale = Vector3.zero;
+            btn.transform.gameObject.SetActive(false);            
         }
     }
 
-    public void MenuOn(bool on, Action onCompletion = null)
-    {
-        
-        Debug.Log("Menu on");
-        Vector3 startVector;
-        Vector3 endVector;
+    public void MenuOn(Action beforeCompletion = null, Action afterCompletion = null)
+    {        
+        if(menuState)
+        {
+            Debug.Log("Menu is alreade on.");
+            return;
+        }
+        menuState = true;
 
+        Vector3 startVector;
+        Vector3 endVector;        
         Color endColor = bgColor;
 
-        if (on)
+        this.afterCompletion = afterCompletion;
+        if (text)
         {
-            if (text)
-            {
-                LeanTween.textAlpha(text, 1f, speedToAppear);
-            }
-            ButtonsOn(true);
-            startVector = Vector3.zero;
-            endVector = Vector3.one;
-            endColor.a = 0.35f;
-
+            LeanTween.textAlpha(text, 1f, speedToAppear);
         }
-        else
-        {
-            if (text)
-            {
-                LeanTween.textAlpha(text, 0f, speedToAppear);
-            }
-
-            startVector = Vector3.one;
-            endVector = Vector3.zero;
-
-            endColor.a = 0f;
-        }
-
+        ButtonsOn(true);
+        startVector = Vector3.zero;
+        endVector = Vector3.one;
+        endColor.a = 0.35f;        
 
         LeanTween.value(bgImage.gameObject, SetColor, bgImage.color, endColor, speedToAppear);
-        StartCoroutine(WaitForButtons(endVector, onCompletion, 0.4f, on));
+        StartCoroutine(WaitForButtons(endVector, beforeCompletion, 0.4f, true));
+    }
+
+    public void MenuOff()
+    {
+        if (!menuState)
+        {
+            Debug.Log("Menu is alreade off.");
+            return;
+        }
+
+        menuState = false;
+
+        Vector3 startVector;
+        Vector3 endVector;
+        Color endColor = bgColor;
+
+        if (text)
+        {
+            LeanTween.textAlpha(text, 0f, speedToAppear);
+        }
+        startVector = Vector3.one;
+        endVector = Vector3.zero;
+        endColor.a = 0f;
+
+        LeanTween.value(bgImage.gameObject, SetColor, bgImage.color, endColor, speedToAppear);
+        StartCoroutine(WaitForButtons(endVector, afterCompletion, 0.4f, true));
     }
 
     void SetColor(Color c)

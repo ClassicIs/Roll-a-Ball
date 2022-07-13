@@ -8,6 +8,7 @@ public class WholeWallScript : MonoBehaviour
     Collider wallDamage;
     public Action<playerController> OnPlayerHit;
 
+
     private void Start()
     {
         wallDamage = GetComponents<Collider>()[1];
@@ -23,6 +24,12 @@ public class WholeWallScript : MonoBehaviour
                 OnPlayerHit(other.GetComponent<playerController>());
             }
         }
+    }
+
+    public void SetWallSize(Vector3 wallSize)
+    {
+        wallDamage.bounds.Expand(wallSize - wallDamage.bounds.size);
+        //transform.localScale = wallSize;
     }
 
     public void WallOff()

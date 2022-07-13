@@ -1,5 +1,6 @@
 using System;
 public interface IUIInterface
 {
-    void MenuOn(bool on, Action onComplition);
+    void MenuOn(Action beforeComplition, Action afterComplition);
+    void MenuOff();
 }
