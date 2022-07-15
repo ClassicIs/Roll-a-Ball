@@ -54,6 +54,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: MovingObstacleHorizontalLeftDoor
       objectReference: {fileID: 0}
+    - target: {fileID: 8612313201256041427, guid: 86eed3e44bbb98e4cb6e5c6abcedd75d,
+        type: 3}
+      propertyPath: m_Size.x
+      value: 0.99999994
+      objectReference: {fileID: 0}
     - target: {fileID: 8612313201256041436, guid: 86eed3e44bbb98e4cb6e5c6abcedd75d,
         type: 3}
       propertyPath: m_RootOrder
@@ -119,7 +124,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 8612313201256041439, guid: 86eed3e44bbb98e4cb6e5c6abcedd75d, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 86eed3e44bbb98e4cb6e5c6abcedd75d, type: 3}
 --- !u!4 &446442400481178061 stripped
 Transform:
@@ -148,6 +154,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: MovingObstacleHorizontalRighttDoor
+      objectReference: {fileID: 0}
+    - target: {fileID: 8612313201256041427, guid: 86eed3e44bbb98e4cb6e5c6abcedd75d,
+        type: 3}
+      propertyPath: m_Size.x
+      value: 0.99999994
       objectReference: {fileID: 0}
     - target: {fileID: 8612313201256041436, guid: 86eed3e44bbb98e4cb6e5c6abcedd75d,
         type: 3}
@@ -214,7 +225,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 8612313201256041439, guid: 86eed3e44bbb98e4cb6e5c6abcedd75d, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 86eed3e44bbb98e4cb6e5c6abcedd75d, type: 3}
 --- !u!4 &446442400263700626 stripped
 Transform:

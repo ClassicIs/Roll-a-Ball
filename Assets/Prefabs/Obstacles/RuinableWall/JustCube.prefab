@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1767322981868978773}
   - component: {fileID: 4567280774671218335}
   - component: {fileID: 7161253938227241736}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: JustCube
   m_TagString: Untagged
   m_Icon: {fileID: 0}

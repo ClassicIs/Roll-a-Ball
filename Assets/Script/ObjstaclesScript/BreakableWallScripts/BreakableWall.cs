@@ -14,6 +14,7 @@ public class BreakableWall : MonoBehaviour
     [Header("One Piece")]
     [SerializeField]
     GameObject breakPiece;
+    [SerializeField]
     WholeWallScript wholeWallScript;
     [SerializeField]
     [Range(1, 50)]
@@ -23,35 +24,28 @@ public class BreakableWall : MonoBehaviour
     int ySize;
     [SerializeField]
     GameObject onePieceOfWall;
+    bool gizmosActive = true;
+
+    private void Awake()
+    {
+        gizmosActive = false;
+        wholeWallScript.OnPlayerHit += Break;
+    }
 
     void Start()
     {
-        int length = transform.childCount;
-        piecesOfWall = new GameObject[length - 1];
-        wholeWallScript = transform.GetChild(0).GetComponent<WholeWallScript>();
-        /*for (int i = 0; i < length; i++)
-        {
-            if (i == 0)
-            {
-                wholeWallScript = transform.GetChild(i).gameObject.GetComponent<WholeWallScript>();
-                wholeWallScript.OnPlayerHit += Break;
-                continue;
-            }
-            piecesOfWall[i - 1] = transform.GetChild(i).gameObject;
-        }*/
-
         Wall thisWall = new Wall(XSize, ySize, onePieceOfWall, transform.position);
         Vector3 sizeOfColliderWall;
-        
-        Vector3[] wallPositions = thisWall.BuildAWall(out sizeOfColliderWall);
+        Vector3 centerOfWall;
+        Vector3[] wallPositions = thisWall.BuildAWall(out sizeOfColliderWall, out centerOfWall);
 
-        Debug.LogFormat("Wall size is {0}", sizeOfColliderWall);
+        piecesOfWall = new GameObject[wallPositions.Length];
 
-        wholeWallScript.SetWallSize(sizeOfColliderWall);
+        //Debug.LogFormat("Wall size is {0}\nCenter of Wall is {1}", sizeOfColliderWall, centerOfWall);
+        wholeWallScript.SetWallSize(sizeOfColliderWall, centerOfWall);
         for (int i = 0; i < wallPositions.Length; i++)
         {
-            //Debug.LogFormat("This piece position is {0}", wallPositions[i]);            
-            Instantiate(onePieceOfWall, wallPositions[i], Quaternion.identity, transform);
+            piecesOfWall[i] = Instantiate(onePieceOfWall, wallPositions[i], Quaternion.identity, transform);
         }
     }
 
@@ -66,8 +60,7 @@ public class BreakableWall : MonoBehaviour
     public void Break(playerController player)
     {
         if (!player.Rushing())
-        {
-            //Debug.Log("Player is NOT rushing");
+        {            
             return;
         }
 
@@ -92,7 +85,7 @@ public class BreakableWall : MonoBehaviour
             {
                 rigidBody.AddExplosionForce(explosionForce, player.transform.position, radiusOfExplosion);
 
-                LeanTween.color(rigidBody.gameObject, tmpCol, timeToDisappear).destroyOnComplete = true;
+                //LeanTween.color(rigidBody.gameObject, tmpCol, timeToDisappear).destroyOnComplete = true;
                 //Destroy(piece, 4f);
             }
             
@@ -100,4 +93,34 @@ public class BreakableWall : MonoBehaviour
         }
     }
 
+    private delegate void CreateCubes(Vector3 positions);
+
+    private event CreateCubes EventToMakeCubes;
+
+    private void OnDrawGizmos()
+    {
+        if(!gizmosActive)
+        {
+            return;
+        }
+        Wall thisWall = new Wall(XSize, ySize, onePieceOfWall, transform.position);
+        Vector3 sizeOfColliderWall;
+        Vector3 centerOfWall;
+        Vector3[] wallPositions = thisWall.BuildAWall(out sizeOfColliderWall, out centerOfWall);
+        Vector3 sizeOfColider = onePieceOfWall.GetComponent<Renderer>().bounds.size;
+
+        Gizmos.color = Color.red;
+        //Debug.LogFormat("Center of wall is {0}\nSize of Collider Wall is {1}", centerOfWall, sizeOfColliderWall);
+        Gizmos.DrawCube(new Vector3(centerOfWall.x, centerOfWall.y, centerOfWall.z), new Vector3(sizeOfColliderWall.x * 2, sizeOfColliderWall.y * 2, sizeOfColliderWall.z * 2));
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawCube(centerOfWall, sizeOfColider);
+        Gizmos.color = Color.green;
+        for (int i = 0; i < wallPositions.Length; i++)
+        {
+            //Debug.LogFormat("Cube {0} is {1}", i, sizeOfColider);
+            Gizmos.DrawWireCube(wallPositions[i], sizeOfColider);
+        }
+
+        
+    }
 }

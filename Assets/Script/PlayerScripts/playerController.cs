@@ -39,10 +39,20 @@ public class playerController : MonoBehaviour {
     private Rigidbody rb;
     List<Collider> coins = new List<Collider>();
 
+    enum KeyState
+    {
+        Pressed,
+        Off
+    }
+    KeyState jumpKey;
+    KeyState rushKey;
+    private IEnumerator CoinAttractorCoroutine;
+
     public Action OnEscape;
     void Awake()
     {
         jumpKey = KeyState.Off;
+        rushKey = KeyState.Off;
         isJumping = false;
         isStunned = false;
         isActive = true;
@@ -98,79 +108,91 @@ public class playerController : MonoBehaviour {
             }
         }
 
+        if (!isActive)
+        {
+            return;
+        }
+
         if (Input.GetButtonDown("Jump"))
         {
             jumpKey = KeyState.Pressed;
         }
-    }
 
-    enum KeyState
-    {
-        Pressed,
-        Off
+        if(Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            Debug.Log("Left Shift Pressed");
+            rushKey = KeyState.Pressed;
+        }
+        else if(Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            Debug.Log("Left Shift up");
+            rushKey = KeyState.Off;
+        }
     }
-    KeyState jumpKey;
-
 
     void FixedUpdate()
     {
-        if (isActive)
+        if (!isActive)
         {
-            if (rb.velocity.y < 0)
-            {
-                rb.AddForce(new Vector3(0, -300));
-            }
-            if (!isStunned)
-            {
-                rb.AddForce(Vector3.forward * forwardForce * increaseForce * Time.deltaTime);
-                /*if(Input.GetKeyDown(KeyCode.A))
-                {
-                    rb.MovePosition(transform.position + moveForce * -1);
-                }
-                else if (Input.GetKeyDown(KeyCode.D))
-                {
-                    rb.MovePosition(transform.position + moveForce * 1);
-                }*/
-                if (isGrounded)
-                {
-                    rb.AddForce(Vector3.right * sidewayForce * Input.GetAxisRaw("Horizontal") * Time.deltaTime, ForceMode.VelocityChange);
-                    if (jumpKey == KeyState.Pressed)
-                    {
-                        Debug.Log("Is jumping");
-                        rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-                        jumpKey = KeyState.Off;
-                    }
+            return;
+        }
 
-                    if (Input.GetKey(KeyCode.LeftShift))
-                    {
-                        isRushing = true;
-                        increaseForce = maxIncreaseForce;
-                    }
-                    else
-                    {
-                        isRushing = false;
-                        increaseForce = 1f;
-                    }
-                    /*
-                    if(Input.GetKeyDown(KeyCode.I) && canUseMagnit)
-                    {
-                        Debug.Log("Using Magnit");
-                        canUseMagnit = false;
-                        StartCoroutine(AttractingCoins());
-                        this.Invoke(delegate { 
-                            canUseMagnit = true;
-                            StopCoroutine(AttractingCoins());
-                            Debug.Log("Stopping coroutine");
-                        }, timeForMagnit);
-                    }*/
-                }
-                else
-                {
-                    rb.AddForce(Vector3.right * sidewayForce / 2f * Input.GetAxisRaw("Horizontal") * Time.deltaTime, ForceMode.VelocityChange);
-                }
-            }
+        if (isStunned)
+        {
+            return;
+        }
+
+        if (rb.velocity.y < 0)
+        {
+            rb.AddForce(new Vector3(0, -300));
+        }
+            
+        rb.AddForce(Vector3.forward * forwardForce * increaseForce * Time.deltaTime);
+        /*if(Input.GetKeyDown(KeyCode.A))
+        {
+            rb.MovePosition(transform.position + moveForce * -1);
+        }
+        else if (Input.GetKeyDown(KeyCode.D))
+        {
+            rb.MovePosition(transform.position + moveForce * 1);
+        }*/
+        if (!isGrounded)
+        {
+            rb.AddForce(Vector3.right * sidewayForce / 2f * Input.GetAxisRaw("Horizontal") * Time.deltaTime, ForceMode.VelocityChange);
+            return;
+        }
+
+        rb.AddForce(Vector3.right * sidewayForce * Input.GetAxisRaw("Horizontal") * Time.deltaTime, ForceMode.VelocityChange);
+        if (jumpKey == KeyState.Pressed)
+        {
+            Debug.Log("Is jumping");
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            jumpKey = KeyState.Off;
+        }
+
+        if (rushKey == KeyState.Pressed)
+        {
+            isRushing = true;
+            increaseForce = maxIncreaseForce;
+        }
+        else
+        {
+            isRushing = false;
+            increaseForce = 1f;
         }
         
+        if(Input.GetKeyDown(KeyCode.I) && canUseMagnit)
+        {
+            Debug.Log("Using Magnit");
+            canUseMagnit = false;
+            CoinAttractorCoroutine = AttractingCoins();
+            StartCoroutine(CoinAttractorCoroutine);
+            this.Invoke(delegate { 
+                canUseMagnit = true;
+                StopCoroutine(CoinAttractorCoroutine);
+                Debug.Log("Stopping coroutine");
+            }, timeForMagnit);
+        }
     }
 
     IEnumerator AttractingCoins()
@@ -178,86 +200,37 @@ public class playerController : MonoBehaviour {
         List<Collider> coinsToChoose = new List<Collider>();
         while (true)
         {
-            IEnumerator tmpCoroutine;
             coinsToChoose.Clear();
             coinsToChoose.AddRange(Physics.OverlapSphere(transform.position, radiusOfMagnit, whatToAttract));
-
+            
             foreach (Collider chooseCoin in coinsToChoose)
             {
-                //Debug.LogFormat("Coin to be attracted {0}", coin.gameObject.name);
-                bool isItThere = false;
-
-
-                if (isItThere)
-                {
-                    coins.Add(chooseCoin);
-
-                }
-                /*tmpCoroutine = CoroutineToAttract(coin.transform);
-                StartCoroutine(tmpCoroutine);
-                this.Invoke(delegate { StopCoroutine(tmpCoroutine); }, timeForMagnit);*/
+                //Debug.LogFormat("Choosen coins are", chooseCoin.name);
+                StartCoroutine(AttractCoins(chooseCoin.transform));
+                chooseCoin.gameObject.layer = 0;
             }
             yield return null;
         }
     }
-
-    List<Collider> Subtract(List<Collider> original, List<Collider> newOnes)
-    {
-        List<Collider> objectsThatAreInBothLists = new List<Collider>();
-        Collider objectToAddToTheList;
-        foreach (Collider objectOriginal in original)
-        {
-            objectToAddToTheList = null;
-
-            foreach (Collider objectNew in newOnes)
-            {
-                objectToAddToTheList = objectNew;
-                if (objectOriginal == objectNew)
-                {
-                    objectToAddToTheList = null;
-                    break;
-                }
-            }
-            if (objectToAddToTheList != null)
-            {
-                objectsThatAreInBothLists.Add(objectToAddToTheList);
-            }
-        }
-        return objectsThatAreInBothLists;
-    }
-
-    bool AttractCoins(Transform coinToAttract)
+    
+    IEnumerator AttractCoins(Transform coinToAttract)
     {
         if (coinToAttract == null)
         {
             Debug.LogFormat("Coin {0} is null.", coinToAttract.gameObject.name);
-            return false;
+            yield break;
         }
-        Debug.LogFormat("Lerping coin {0}", coinToAttract.gameObject.name);
-        coinToAttract.position = Vector3.Lerp(coinToAttract.position, transform.position, speedToAttract);
-        return true;
-    }
-    /*
-    IEnumerator StopCoroutineAfter(IEnumerator cor, float delay)
-    {
-        yield return 
-    }*/
-
-    IEnumerator CoroutineToAttract(Transform coin)
-    {
-        while (true)
+        float lerping = 0f;
+        while (coinToAttract != null)
         {
-            if (AttractCoins(coin))
-            {
-                continue;
-            }
-            else
-            {
-                break;
-            }
+            lerping += speedToAttract * Time.deltaTime;
+            //Debug.LogFormat("Lerping coin {0}, with speed", coinToAttract.gameObject.name, lerping);
+            coinToAttract.position = Vector3.Lerp(coinToAttract.position, transform.position, lerping);
+
             yield return null;
         }
     }
+    
 
     private void OnDrawGizmos()
     {

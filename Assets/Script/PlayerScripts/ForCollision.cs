@@ -34,7 +34,7 @@ public class ForCollision : MonoBehaviour {
     {
         Collider[] groundResponse = Physics.OverlapSphere(groundCheckPosition.position, groundCheckRadius, whatIsGround);
         //Debug.LogFormat("Collider count is {0}", groundResponse.Length);
-        if(groundResponse.Length == 0)
+        if(groundResponse == null)
         {
             isOnGround = false;
             //Debug.Log("Off ground");
@@ -58,14 +58,14 @@ public class ForCollision : MonoBehaviour {
 
     private void OnCollisionEnter(Collision collision)
     {
-        /*if (collision.collider.CompareTag("Bad"))
+        if (collision.collider.CompareTag("Bad"))
         {
             if(OnDeath != null)
             {
                 OnDeath();
             }
         }
-
+        /*
         if (!hasDied)
         {
             if (collision.collider.CompareTag("Ground"))
@@ -98,7 +98,7 @@ public class ForCollision : MonoBehaviour {
             Invoke("Win", timeToWin);*/
 
         }
-
+        /*
         if (other.CompareTag("Bad"))
         {
             Debug.Log("Collided with obsticle");
@@ -107,7 +107,7 @@ public class ForCollision : MonoBehaviour {
                 OnDeath();
             }
         }
-
+        */
         if (other.CompareTag("Coin"))
         {
             if (OnCoin != null)

@@ -2,14 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Wall : MonoBehaviour
+public class Wall
 {
     int xSize;
     int ySize;
     GameObject cell;
-    BoxCollider colliderOfObject;
     Renderer rendererOfObject;
     Vector3 positionOfOrigin;
+    Vector3 colliderSize;
 
     public Wall(int xSize, int ySize, GameObject cell, Vector3 originPosition)
     {
@@ -17,22 +17,20 @@ public class Wall : MonoBehaviour
         this.ySize = ySize;
 
         this.cell = cell;
-
-        positionOfOrigin = originPosition;
-        colliderOfObject = cell.GetComponent<BoxCollider>();
-        rendererOfObject = cell.GetComponent<Renderer>(); 
-
+        rendererOfObject = cell.GetComponent<Renderer>();
+        colliderSize = rendererOfObject.bounds.size;
+        positionOfOrigin = new Vector3(originPosition.x + colliderSize.x / 2, originPosition.y + colliderSize.y / 2, originPosition.z);
     }
 
-    public Vector3[] BuildAWall(out Vector3 sizeOfTheWholeWall)
+    public Vector3[] BuildAWall(out Vector3 sizeOfTheWholeWall, out Vector3 centerOfTheWall)
     {
         //Debug.LogFormat("Collider is {0}\nCollider position is {1}", colliderOfObject.isTrigger, colliderOfObject.bounds.center);
         
         int numberOfPositions = xSize * ySize;
         Vector3[] positionsOfCells = new Vector3[numberOfPositions];
-        Vector3 colliderSize = rendererOfObject.bounds.size;
+         
 
-        sizeOfTheWholeWall = new Vector3(xSize * colliderSize.x, ySize * colliderSize.y, colliderSize.z);
+        sizeOfTheWholeWall = new Vector3(xSize * colliderSize.x / 2, ySize * colliderSize.y / 2, colliderSize.z / 2);
 
         float xValueOfCollider = colliderSize.x;
         float yValueOfCollider = colliderSize.y;
@@ -67,7 +65,7 @@ public class Wall : MonoBehaviour
         }
         /*oldCellXPosition = 0f;
         currentCellXPosition = oldCellXPosition;*/
-
+        centerOfTheWall = new Vector3((positionOfOrigin.x + sizeOfTheWholeWall.x) - colliderSize.x / 2, (positionOfOrigin.y + sizeOfTheWholeWall.y) - colliderSize.x / 2, positionOfOrigin.z);
         return positionsOfCells;
     }
 }

@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 8612313201256041426}
   - component: {fileID: 8612313201256041427}
   - component: {fileID: 8612313201256041424}
-  - component: {fileID: 8612313201256041439}
   m_Layer: 0
   m_Name: MovingObstacleVeritcal
   m_TagString: Bad
@@ -112,17 +111,6 @@ MonoBehaviour:
   speed: 4
   low: -2
   timeToWait: 3
+  startWaitingTime: 0
   movementOfThisObject: 1
---- !u!65 &8612313201256041439
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8612313201256041425}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.99999994, y: 1, z: 1.549221}
-  m_Center: {x: 0, y: 0, z: -0.27461052}
+  motionType: 0

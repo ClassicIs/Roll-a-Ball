@@ -55,37 +55,37 @@ public class UIManagerScript : MonoBehaviour
 
     public void CloseMenu()
     {
-        if (currentMenu != null)
-        {
-            currentMenu.MenuOff();
-        }
-        else
+        if (currentMenu == null)
         {
             Debug.Log("There's no menu.");
+            return;
         }
+        
+        currentMenu.MenuOff();
     }
 
     public void ChangeScore(int newScore)
     {
-        
-        if (!isChangingScore)
-        {
-            Vector3 oldVector = scoreText.GetComponent<RectTransform>().localScale;
-            
-            Action nextAfterCompletion = delegate
-            {
-                isChangingScore = false;
-            };
-            
-            Action afterCompletion = delegate
-            {
-                LeanTween.scale(scoreText.gameObject, oldVector, speed).setOnComplete(nextAfterCompletion);
-                LeanTween.textColor(scoreText.rectTransform, Color.white, speed);
-            };
-            LeanTween.textColor(scoreText.rectTransform, Color.yellow, speed);
-            LeanTween.scale(scoreText.gameObject, new Vector3(1.2f, 1.2f), speed).setOnComplete(afterCompletion);            
-        }
         scoreText.text = newScore.ToString();
+
+        if (isChangingScore)
+        {
+            return;
+        }
+
+        Vector3 oldVector = scoreText.GetComponent<RectTransform>().localScale;            
+        Action nextAfterCompletion = delegate
+        {
+            isChangingScore = false;
+        };
+            
+        Action afterCompletion = delegate
+        {
+            LeanTween.scale(scoreText.gameObject, oldVector, speed).setOnComplete(nextAfterCompletion);
+            LeanTween.textColor(scoreText.rectTransform, Color.white, speed);
+        };
+        LeanTween.textColor(scoreText.rectTransform, Color.yellow, speed);
+        LeanTween.scale(scoreText.gameObject, new Vector3(1.2f, 1.2f), speed).setOnComplete(afterCompletion);
     }
 
 }
